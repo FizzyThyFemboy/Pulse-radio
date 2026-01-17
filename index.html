@@ -186,7 +186,7 @@
         .play-btn.active { padding-left: 0; } /* Center pause icon */
 
         .status {
-            margin-top: 25px;
+            margin-top: 15px;
             font-size: 0.8rem;
             font-weight: 800;
             letter-spacing: 2px;
@@ -194,6 +194,41 @@
             text-transform: uppercase;
         }
         .playing .status { color: var(--primary); }
+
+        /* --- Volume Slider Styling --- */
+        .volume-container {
+            width: 100%;
+            margin-top: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-muted);
+        }
+
+        .volume-slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 5px;
+            outline: none;
+            transition: background 0.3s;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: var(--primary);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px var(--primary-glow);
+            transition: transform 0.2s;
+        }
+
+        .volume-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.3);
+        }
 
         /* --- Content Sections --- */
         .section {
@@ -359,6 +394,13 @@
                 </button>
                 
                 <div class="status" id="status">OFFLINE</div>
+
+                <!-- NEW Volume Slider -->
+                <div class="volume-container">
+                    <i class="fas fa-volume-down"></i>
+                    <input type="range" min="0" max="1" step="0.01" value="0.8" class="volume-slider" id="volumeSlider">
+                    <i class="fas fa-volume-up"></i>
+                </div>
             </div>
         </div>
     </div>
@@ -463,12 +505,21 @@
         const card = document.getElementById("playerCard");
         const playBtn = document.querySelector(".play-btn");
         const popup = document.getElementById("warningPopup");
+        const volumeSlider = document.getElementById("volumeSlider");
+
+        // Set initial volume
+        audio.volume = 0.8;
+
+        // Volume Slider Logic
+        volumeSlider.addEventListener("input", (e) => {
+            audio.volume = e.target.value;
+        });
 
         // HTTPS Warning Logic
         if (location.protocol === 'https:') {
             popup.style.display = 'block';
             setTimeout(() => {
-                // Auto-hide after 15s if they ignore it, to be less annoying
+                // Auto-hide after 15s if they ignore it
                 popup.style.display = 'none';
             }, 15000);
         }
@@ -495,16 +546,6 @@
                 card.classList.remove("playing");
             }
         }
-        
-        // Volume Control (Optional - Mouse Wheel)
-        card.addEventListener('wheel', (e) => {
-            e.preventDefault();
-            if (e.deltaY < 0) {
-                audio.volume = Math.min(1, audio.volume + 0.1);
-            } else {
-                audio.volume = Math.max(0, audio.volume - 0.1);
-            }
-        });
     </script>
 </body>
 </html>
