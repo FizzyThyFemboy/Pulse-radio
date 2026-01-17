@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Pulse Radio - The Heartbeat of Music. Streaming 24/7 for gamers and developers.">
+    <title>Pulse Radio | The Heartbeat of Music</title>
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #ff3e3e; /* Pulse Red */
+            --primary-glow: rgba(255, 62, 62, 0.4);
+            --bg-dark: #0a0a0a;
+            --bg-panel: rgba(25, 25, 25, 0.7);
+            --text-main: #ffffff;
+            --text-muted: #b3b3b3;
+            --gradient: linear-gradient(135deg, #ff3e3e 0%, #a80000 100%);
+        }
+
+        * {
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Outfit', sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* --- Background Animation --- */
+        .bg-mesh {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 15% 50%, rgba(255, 62, 62, 0.08), transparent 25%),
+                        radial-gradient(circle at 85% 30%, rgba(255, 62, 62, 0.05), transparent 25%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* --- Navigation --- */
+        nav {
+            position: fixed;
+            top: 0; width: 100%;
+            padding: 20px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .nav-logo {
+            font-weight: 900;
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            color: white;
+            text-decoration: none;
+        }
+        .nav-logo span { color: var(--primary); }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            margin-left: 30px;
+            font-weight: 600;
+            transition: color 0.3s;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .nav-links a:hover, .nav-links a.active { color: var(--primary); }
+
+        /* --- Hero & Player Section --- */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 100px 20px 50px;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-size: 5rem;
+            line-height: 1;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: -2px;
+            background: -webkit-linear-gradient(#fff, #aaa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            margin: 20px 0 40px;
+            max-width: 600px;
+        }
+
+        /* Player Card */
+        .player-wrapper {
+            position: relative;
+            z-index: 10;
+        }
+
+        .player-card {
+            background: var(--bg-panel);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 40px;
+            border-radius: 30px;
+            width: 350px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .player-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 30px 60px rgba(255, 62, 62, 0.15);
+            border-color: rgba(255, 62, 62, 0.3);
+        }
+
+        .visualizer {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 5px;
+            height: 40px;
+            margin-bottom: 30px;
+        }
+        .bar {
+            width: 6px;
+            background: var(--primary);
+            border-radius: 3px;
+            height: 5px;
+            transition: height 0.1s;
+        }
+        .playing .bar { animation: bounce 1s infinite ease-in-out; }
+        .playing .bar:nth-child(1) { animation-delay: 0.1s; }
+        .playing .bar:nth-child(2) { animation-delay: 0.3s; }
+        .playing .bar:nth-child(3) { animation-delay: 0.5s; }
+        .playing .bar:nth-child(4) { animation-delay: 0.2s; }
+        .playing .bar:nth-child(5) { animation-delay: 0.4s; }
+
+        @keyframes bounce {
+            0%, 100% { height: 10px; opacity: 0.5; }
+            50% { height: 35px; opacity: 1; }
+        }
+
+        .play-btn {
+            background: var(--gradient);
+            border: none;
+            width: 90px; height: 90px;
+            border-radius: 50%;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+            box-shadow: 0 10px 30px var(--primary-glow);
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-left: 5px; /* Optically center play icon */
+        }
+        
+        .play-btn:hover { transform: scale(1.1); box-shadow: 0 15px 40px var(--primary-glow); }
+        .play-btn.active { padding-left: 0; } /* Center pause icon */
+
+        .status {
+            margin-top: 25px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+        .playing .status { color: var(--primary); }
+
+        /* --- Content Sections --- */
+        .section {
+            padding: 100px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            margin-bottom: 60px;
+        }
+        .section-header h2 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+        .section-header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        /* Grid Layouts */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: center;
+        }
+        
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background: var(--bg-panel);
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: 0.3s;
+        }
+        .feature-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+        }
+        .feature-card i {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+        .feature-card h3 { margin: 0 0 10px; font-size: 1.5rem; }
+        .feature-card p { color: var(--text-muted); margin: 0; }
+
+        /* Discord Section */
+        .discord-section {
+            background: linear-gradient(rgba(88, 101, 242, 0.1), rgba(0,0,0,0));
+            border-radius: 30px;
+            padding: 60px;
+            text-align: center;
+            border: 1px solid rgba(88, 101, 242, 0.2);
+            margin-top: 50px;
+        }
+        
+        .btn-discord {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: #5865F2;
+            color: white;
+            padding: 15px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-top: 30px;
+            transition: 0.3s;
+            box-shadow: 0 10px 30px rgba(88, 101, 242, 0.3);
+        }
+        .btn-discord:hover {
+            background: #4752c4;
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(88, 101, 242, 0.5);
+        }
+
+        /* --- Footer --- */
+        footer {
+            border-top: 1px solid rgba(255,255,255,0.05);
+            padding: 50px 20px;
+            text-align: center;
+            margin-top: 100px;
+            color: var(--text-muted);
+        }
+        .socials { margin-top: 20px; }
+        .socials a {
+            color: white;
+            margin: 0 15px;
+            font-size: 1.2rem;
+            transition: 0.3s;
+        }
+        .socials a:hover { color: var(--primary); }
+
+        /* --- HTTP Warning Popup --- */
+        .warning-popup {
+            position: fixed;
+            bottom: 20px; right: 20px;
+            background: #ffcc00;
+            color: black;
+            padding: 20px;
+            border-radius: 10px;
+            width: 300px;
+            display: none;
+            z-index: 2000;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            font-weight: 600;
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 3rem; }
+            .grid-2 { grid-template-columns: 1fr; }
+            nav { padding: 20px; }
+            .nav-links { display: none; } /* Hide nav links on mobile for cleaner look */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-mesh"></div>
+
+    <!-- Navigation -->
+    <nav>
+        <a href="#" class="nav-logo">Pulse <span>Radio</span></a>
+        <div class="nav-links">
+            <a href="#home">Tune In</a>
+            <a href="#about">About</a>
+            <a href="#features">Features</a>
+            <a href="#community">Discord</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="hero" id="home">
+        <h1>The Heartbeat<br>of Music.</h1>
+        <p>Streaming high-fidelity beats, developer mixes, and community requests 24/7. No ads, just vibe.</p>
+        
+        <div class="player-wrapper">
+            <div class="player-card" id="playerCard">
+                <div class="visualizer">
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                </div>
+
+                <audio id="stream" preload="none">
+                    <!-- Your Stream IP -->
+                    <source src="http://140.82.60.45:8000/stream" type="audio/mp3">
+                </audio>
+
+                <button class="play-btn" onclick="toggleAudio()">
+                    <i class="fas fa-play" id="icon"></i>
+                </button>
+                
+                <div class="status" id="status">OFFLINE</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features / What We Do -->
+    <div class="section" id="features">
+        <div class="section-header">
+            <h2>What We Do</h2>
+            <p>More than just a playlist. We are a community platform.</p>
+        </div>
+        
+        <div class="grid-3">
+            <div class="feature-card">
+                <i class="fas fa-broadcast-tower"></i>
+                <h3>24/7 Streaming</h3>
+                <p>Non-stop music with 99.9% uptime. Whether it's 3 AM coding sessions or afternoon gaming, we're live.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-sliders-h"></i>
+                <h3>High Fidelity</h3>
+                <p>Broadcasting at 320kbps for crystal clear audio quality. Hear every bass drop and synth wave.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-user-friends"></i>
+                <h3>Community Driven</h3>
+                <p>Our playlist is curated by the community. Vote on tracks and submit your own mixes via Discord.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- About Section -->
+    <div class="section" id="about">
+        <div class="grid-2">
+            <div>
+                <h2>Who Is Pulse?</h2>
+                <p style="color: var(--text-muted); margin-bottom: 20px;">
+                    Pulse Radio was founded with one simple mission: to provide the ultimate soundtrack for the digital generation. 
+                    We are developers, gamers, and audiophiles building a station that understands your workflow.
+                </p>
+                <p style="color: var(--text-muted);">
+                    Based in NSW, Australia, we operate a dedicated infrastructure to ensure the music never stops. 
+                    From Lo-Fi study beats to high-energy Drum & Bass, Pulse adapts to the rhythm of your day.
+                </p>
+            </div>
+            <div style="background: linear-gradient(45deg, #1a1a1a, #222); padding: 40px; border-radius: 20px; border: 1px solid #333;">
+                <h3 style="color: var(--primary); margin-top: 0;">Station Stats</h3>
+                <div style="display: flex; justify-content: space-between; margin-top: 30px;">
+                    <div>
+                        <strong style="font-size: 2rem; display: block;">24/7</strong>
+                        <span style="font-size: 0.9rem; color: #888;">Uptime</span>
+                    </div>
+                    <div>
+                        <strong style="font-size: 2rem; display: block;">HQ</strong>
+                        <span style="font-size: 0.9rem; color: #888;">Audio</span>
+                    </div>
+                    <div>
+                        <strong style="font-size: 2rem; display: block;">100%</strong>
+                        <span style="font-size: 0.9rem; color: #888;">Free</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Discord Community -->
+    <div class="section" id="community">
+        <div class="discord-section">
+            <i class="fab fa-discord" style="font-size: 4rem; color: #5865F2; margin-bottom: 20px;"></i>
+            <h2>Join the Server</h2>
+            <p style="max-width: 600px; margin: 0 auto; color: var(--text-muted);">
+                Connect with other listeners, request songs directly to the DJ bot, 
+                and get notified when special events go live.
+            </p>
+            <a href="YOUR_DISCORD_LINK_HERE" target="_blank" class="btn-discord">
+                <i class="fab fa-discord"></i> Join Discord
+            </a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 Pulse Radio. Built by Pulse Dev Team.</p>
+        <div class="socials">
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-github"></i></a>
+        </div>
+    </footer>
+
+    <!-- HTTP Warning (Essential for Vercel) -->
+    <div class="warning-popup" id="warningPopup">
+        <i class="fas fa-exclamation-triangle"></i> Audio Blocked?<br>
+        <span style="font-weight: 400; font-size: 0.9rem; display: block; margin-top: 5px;">
+            Your browser blocked the stream because it's HTTP. Click the 🔒 lock icon in your URL bar > Site Settings > Insecure Content > <strong>Allow</strong>.
+        </span>
+    </div>
+
+    <script>
+        const audio = document.getElementById("stream");
+        const icon = document.getElementById("icon");
+        const status = document.getElementById("status");
+        const card = document.getElementById("playerCard");
+        const playBtn = document.querySelector(".play-btn");
+        const popup = document.getElementById("warningPopup");
+
+        // HTTPS Warning Logic
+        if (location.protocol === 'https:') {
+            popup.style.display = 'block';
+            setTimeout(() => {
+                // Auto-hide after 15s if they ignore it, to be less annoying
+                popup.style.display = 'none';
+            }, 15000);
+        }
+
+        function toggleAudio() {
+            if (audio.paused) {
+                audio.play().then(() => {
+                    icon.classList.remove("fa-play");
+                    icon.classList.add("fa-pause");
+                    playBtn.classList.add("active"); // Adjusts icon alignment
+                    status.innerText = "LIVE ON AIR";
+                    card.classList.add("playing");
+                    popup.style.display = 'none'; // Success! Hide warning
+                }).catch(err => {
+                    console.error("Playback error:", err);
+                    alert("Browser blocked audio. Please allow 'Insecure Content' in site settings.");
+                });
+            } else {
+                audio.pause();
+                icon.classList.remove("fa-pause");
+                icon.classList.add("fa-play");
+                playBtn.classList.remove("active");
+                status.innerText = "PAUSED";
+                card.classList.remove("playing");
+            }
+        }
+        
+        // Volume Control (Optional - Mouse Wheel)
+        card.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            if (e.deltaY < 0) {
+                audio.volume = Math.min(1, audio.volume + 0.1);
+            } else {
+                audio.volume = Math.max(0, audio.volume - 0.1);
+            }
+        });
+    </script>
+</body>
+</html>
