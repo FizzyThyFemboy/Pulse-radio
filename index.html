@@ -27,6 +27,11 @@
             
             --glass-border: rgba(255, 255, 255, 0.08);
             --glass-blur: 20px;
+
+            /* Rank Colors */
+            --rank-owner: #ff3e3e;     /* Red */
+            --rank-admin: #5865F2;     /* Discord Blue/Purple */
+            --rank-dev: #2ecc71;       /* Emerald Green */
         }
 
         * {
@@ -99,6 +104,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            cursor: pointer;
         }
         
         .pulse-dot {
@@ -124,10 +130,25 @@
             font-weight: 600;
             font-size: 0.85rem;
             transition: all 0.3s;
+            cursor: pointer;
         }
         
         .nav-links a:hover { color: white; background: rgba(255,255,255,0.1); }
         .nav-links a.active { background: var(--primary); color: white; }
+
+        /* VIEW MANAGEMENT */
+        .view-section {
+            display: block;
+            animation: fadeIn 0.5s ease-out;
+        }
+        .hidden {
+            display: none !important;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
         /* --- Hero Section --- */
         .hero {
@@ -165,7 +186,6 @@
             z-index: 10;
         }
 
-        /* The glow behind the player */
         .player-wrapper::before {
             content: '';
             position: absolute;
@@ -183,7 +203,7 @@
         .player-card {
             background: #0f0f0f;
             border: 1px solid rgba(255,255,255,0.1);
-            padding: 5px; /* Tiny padding for inner border look */
+            padding: 5px; 
             border-radius: 40px;
             width: 360px;
             box-shadow: 0 20px 50px rgba(0,0,0,0.8);
@@ -191,7 +211,6 @@
             overflow: hidden;
         }
 
-        /* Inner container mimicking screen/interface */
         .player-inner {
             background: linear-gradient(180deg, #1a1a1a 0%, #0a0a0a 100%);
             border-radius: 35px;
@@ -354,7 +373,6 @@
             text-shadow: 0 0 30px rgba(255,255,255,0.1);
         }
         
-        /* Modern Bento Grid */
         .grid-3 {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -399,7 +417,7 @@
         .feature-card h3 { margin: 0 0 10px; font-size: 1.3rem; }
         .feature-card p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.7; }
 
-        /* About Stats Box */
+        /* Stats Box */
         .stats-box {
             background: linear-gradient(135deg, #111, #1a1a1a);
             padding: 40px;
@@ -413,6 +431,136 @@
             color: white; 
             font-family: 'JetBrains Mono', monospace;
         }
+
+            /* --- TEAM STYLES --- */
+            .tier-label {
+                text-align: center;
+                font-size: 0.85rem;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 4px;
+                color: var(--text-muted);
+                margin: 60px 0 40px;
+                position: relative;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-family: 'JetBrains Mono', monospace;
+            }
+            
+            .tier-label::before, .tier-label::after {
+                content: '';
+                height: 1px;
+                width: 40px;
+                background: rgba(255,255,255,0.1);
+                margin: 0 20px;
+            }
+
+            .tier-grid {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 30px;
+            }
+
+            .team-card {
+                background: var(--bg-card);
+                border: 1px solid var(--glass-border);
+                border-radius: 24px;
+                padding: 35px;
+                text-align: center;
+                transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                position: relative;
+                overflow: hidden;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                width: 320px;
+                backdrop-filter: blur(10px);
+            }
+
+            .team-card:hover {
+                transform: translateY(-10px) scale(1.02);
+                box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+                background: var(--bg-card-hover);
+            }
+
+            /* Rank Specific Styles */
+            .team-card.rank-exec {
+                width: 380px; 
+                border-top: 2px solid var(--rank-owner);
+                background: linear-gradient(180deg, rgba(255, 62, 62, 0.08) 0%, rgba(10,10,10,0.8) 100%);
+            }
+            .team-card.rank-exec:hover { box-shadow: 0 30px 80px rgba(255, 62, 62, 0.2); }
+
+            .team-card.rank-mgmt { border-top: 2px solid var(--rank-admin); }
+            .team-card.rank-mgmt:hover { 
+                box-shadow: 0 30px 60px rgba(88, 101, 242, 0.2); 
+                border-color: rgba(88, 101, 242, 0.4);
+            }
+
+            .team-card.rank-dev { border-top: 2px solid var(--rank-dev); }
+            .team-card.rank-dev:hover { 
+                box-shadow: 0 30px 60px rgba(46, 204, 113, 0.2); 
+                border-color: rgba(46, 204, 113, 0.4);
+            }
+
+        /* PFP */
+        .pfp-wrapper {
+            width: 110px; height: 110px;
+            margin-bottom: 25px;
+            position: relative;
+            z-index: 2;
+        }
+        .rank-exec .pfp-wrapper { width: 140px; height: 140px; }
+
+        .pfp-wrapper img {
+            width: 100%; height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid rgba(255,255,255,0.1);
+            padding: 4px;
+            background: transparent;
+            transition: 0.3s;
+        }
+
+        .team-card:hover .pfp-wrapper img {
+            border-color: white;
+            background: rgba(255,255,255,0.1);
+        }
+        
+        .rank-exec:hover .pfp-wrapper img { border-color: var(--rank-owner); background: rgba(255,62,62,0.1); }
+        .rank-mgmt:hover .pfp-wrapper img { border-color: var(--rank-admin); background: rgba(88,101,242,0.1); }
+        .rank-dev:hover .pfp-wrapper img { border-color: var(--rank-dev); background: rgba(46,204,113,0.1); }
+
+        .role-badge {
+            font-size: 0.7rem; font-weight: 700;
+            padding: 6px 14px; border-radius: 50px;
+            text-transform: uppercase; letter-spacing: 1px;
+            margin-bottom: 15px; display: inline-block;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .rank-exec .role-badge { background: rgba(255, 62, 62, 0.15); color: var(--rank-owner); border: 1px solid rgba(255,62,62,0.2); }
+        .rank-mgmt .role-badge { background: rgba(88, 101, 242, 0.15); color: var(--rank-admin); border: 1px solid rgba(88,101,242,0.2); }
+        .rank-dev .role-badge { background: rgba(46, 204, 113, 0.15); color: var(--rank-dev); border: 1px solid rgba(46,204,113,0.2); }
+
+        .member-name { font-size: 1.5rem; font-weight: 800; margin: 0 0 10px; color: white; letter-spacing: -0.5px; }
+        .member-bio { font-size: 0.95rem; color: #999; margin-bottom: 10px; line-height: 1.6; max-width: 90%; }
+
+        /* Skills Ticker */
+        .skills-container {
+            width: 100%; overflow: hidden; white-space: nowrap;
+            position: absolute; bottom: 0; left: 0; padding: 12px 0;
+            background: rgba(0,0,0,0.8); border-top: 1px solid rgba(255,62,62,0.2);
+            mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+        }
+
+        .skills-ticker { display: inline-block; animation: ticker 30s linear infinite; }
+        .skills-ticker span { display: inline-block; padding: 0 15px; font-size: 0.75rem; color: #ccc; font-family: 'JetBrains Mono', monospace; opacity: 0.8; }
+        .skills-ticker span i { margin-right: 6px; color: var(--rank-owner); }
+
+        @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
         /* Discord Section */
         .discord-section {
@@ -454,12 +602,7 @@
             color: #555;
             font-size: 0.9rem;
         }
-        .socials a {
-            color: #888;
-            margin: 0 15px;
-            font-size: 1.3rem;
-            transition: 0.2s;
-        }
+        .socials a { color: #888; margin: 0 15px; font-size: 1.3rem; transition: 0.2s; }
         .socials a:hover { color: white; }
 
         /* Warning Popup */
@@ -479,7 +622,6 @@
             border: 1px solid rgba(255,255,255,0.2);
             animation: slideUp 0.5s ease-out;
         }
-
         @keyframes slideUp { from { transform: translateY(100px); opacity: 0; } to { transform: translateY(0); opacity: 1; }}
 
         /* Mobile */
@@ -489,7 +631,35 @@
             .nav-links { display: none; }
             .grid-2 { grid-template-columns: 1fr; }
             .player-card { width: 100%; max-width: 340px; }
+            .team-card { width: 100%; max-width: 350px; }
+            .skills-container { mask-image: none; }
         }
+        /* --- HEADER ALIGNMENT FIX --- */
+.page-header {
+    width: 100%;
+    text-align: center;            /* Centers the text horizontally */
+    padding-top: 180px;            /* Pushes it down below the navbar */
+    padding-bottom: 40px;          /* Adds space between text and cards */
+    display: flex;
+    flex-direction: column;
+    align-items: center;           /* Ensures flex children are centered */
+    justify-content: center;
+}
+
+.page-header h1 {
+    font-size: 4rem;
+    margin-bottom: 10px;
+    /* Optional: Makes the title pop more */
+    text-shadow: 0 0 30px rgba(255, 255, 255, 0.1); 
+}
+
+.page-header p {
+    font-size: 1.2rem;
+    color: var(--text-muted, #888); /* Fallback color if var missing */
+    max-width: 600px;              /* Prevents text from stretching too wide */
+    margin: 0 auto;                /* Centers the paragraph block */
+}
+
     </style>
 </head>
 <body>
@@ -499,131 +669,232 @@
 
     <!-- Floating Navigation -->
     <nav>
-        <a href="#" class="nav-logo">
+        <a onclick="showSection('home')" class="nav-logo">
             <div class="pulse-dot"></div> Pulse
         </a>
         <div class="nav-links">
-            <a href="#home">Tune In</a>
-            <a href="#about">About</a>
-            <a href="#features">Features</a>
-            <a href="#community">Community</a>
-            <a href="team.html">Meet The Team</a>
+            <a onclick="showSection('home')" class="active" id="nav-home">Tune In</a>
+            <a href="#about" onclick="showSection('home')">About</a>
+            <a href="#features" onclick="showSection('home')">Features</a>
+            <a onclick="showSection('team')" id="nav-team">Meet The Team</a>
         </div>
-        <a href="#community" style="color:white; text-decoration:none; font-size: 1.2rem;">
+        <a href="https://discord.gg/GDT8pZ5vRs" target="_blank" style="color:white; text-decoration:none; font-size: 1.2rem;">
             <i class="fab fa-discord"></i>
         </a>
     </nav>
 
-    <!-- Hero Section -->
-    <div class="hero" id="home">
-        <h1>Digital<br>Heartbeat.</h1>
-        <p>High-fidelity audio streaming for the coding generation.</p>
-        
-        <div class="player-wrapper">
-            <div class="player-card" id="playerCard">
-                <div class="player-inner">
-                    <div class="visualizer">
-                        <div class="bar"></div>
-                        <div class="bar"></div>
-                        <div class="bar"></div>
-                        <div class="bar"></div>
-                        <div class="bar"></div>
+    <!-- WRAPPER FOR HOME CONTENT -->
+    <div id="section-home" class="view-section">
+        <!-- Hero Section -->
+        <div class="hero" id="home">
+            <h1>Digital<br>Heartbeat.</h1>
+            <p>High-fidelity audio streaming for the coding generation.</p>
+            
+            <div class="player-wrapper">
+                <div class="player-card" id="playerCard">
+                    <div class="player-inner">
+                        <div class="visualizer">
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                        </div>
+
+                        <!-- Audio Element with ID 'stream' -->
+                        <audio id="stream" preload="none"></audio>
+
+                        <button class="play-btn" id="playButton" onclick="handlePlayClick()">
+                            <i class="fas fa-play" id="icon"></i>
+                        </button>
+                        
+                        <div class="status" id="status">System Standby</div>
+
+                        <div class="song-info">
+                            <div class="song-title" id="songTitle">Ready to Tune In</div>
+                            <div class="song-artist" id="songArtist">Pulse Radio Network</div>
+                        </div>
+
+                        <div class="volume-container">
+                            <i class="fas fa-volume-down" style="font-size: 0.8rem;"></i>
+                            <input type="range" min="0" max="1" step="0.01" value="0.8" class="volume-slider" id="volumeSlider">
+                            <i class="fas fa-volume-up" style="font-size: 0.8rem;"></i>
+                        </div>
                     </div>
+                </div>
+            </div>
+        </div>
 
-                    <audio id="stream" preload="none"></audio>
+        <!-- Features -->
+        <div class="section" id="features">
+            <div class="section-header">
+                <h2>System Specs</h2>
+                <p>Built for performance and uptime.</p>
+            </div>
+            
+            <div class="grid-3">
+                <div class="feature-card">
+                    <i class="fas fa-broadcast-tower"></i>
+                    <h3>24/7 Uptime</h3>
+                    <p>Redundant stream servers ensure the music never stops, even during your late-night debugging sessions.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-wave-square"></i>
+                    <h3>320kbps Audio</h3>
+                    <p>Crystal clear, high-bitrate audio delivery. No compression artifacts, just pure sound.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-terminal"></i>
+                    <h3>Open Request</h3>
+                    <p>Control the playlist via our Discord bot. Community-curated tracks voted by listeners.</p>
+                </div>
+            </div>
+        </div>
 
-                    <button class="play-btn" id="playButton" onclick="handlePlayClick()">
-                        <i class="fas fa-play" id="icon"></i>
-                    </button>
+        <!-- About Section -->
+        <div class="section" id="about">
+            <div class="grid-2">
+                <div>
+                    <h2 style="text-align: left;">The Network</h2>
+                    <p style="color: var(--text-muted); margin-bottom: 20px;">
+                        Pulse Radio isn't just a playlist—it's infrastructure. We operate a dedicated broadcasting node in NSW, Australia, designed to deliver low-latency audio to listeners worldwide.
+                    </p>
+                    <p style="color: var(--text-muted);">
+                        Whether you are coding a new react app, grinding an RPG, or just chilling, our frequency adapts to your workflow.
+                    </p>
+                </div>
+                <div class="stats-box">
+                    <h3 style="color: var(--primary); margin-top: 0; font-family: 'JetBrains Mono';">/// STATUS_REPORT</h3>
+                    <div style="display: flex; justify-content: space-between; margin-top: 40px;">
+                        <div class="stat-item">
+                            <strong>99.9%</strong>
+                            <span style="font-size: 0.8rem; color: #666; text-transform:uppercase; letter-spacing:1px;">Availability</span>
+                        </div>
+                        <div class="stat-item">
+                            <strong>0$</strong>
+                            <span style="font-size: 0.8rem; color: #666; text-transform:uppercase; letter-spacing:1px;">Cost</span>
+                        </div>
+                        <div class="stat-item">
+                            <strong>Inf</strong>
+                            <span style="font-size: 0.8rem; color: #666; text-transform:uppercase; letter-spacing:1px;">Vibes</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Discord -->
+        <div class="section" id="community">
+            <div class="discord-section">
+                <i class="fab fa-discord" style="font-size: 3.5rem; color: #5865F2; margin-bottom: 20px; filter: drop-shadow(0 0 20px rgba(88,101,242,0.4));"></i>
+                <h2>Join the Neural Network</h2>
+                <p style="max-width: 600px; margin: 10px auto; color: var(--text-muted);">
+                    Connect with the community, access the DJ bot, and participate in server events.
+                </p>
+                <a href="https://discord.gg/GDT8pZ5vRs" target="_blank" class="btn-discord">
+                    <span>Enter Discord</span> <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    <!-- END HOME WRAPPER -->
+
+
+    <!-- WRAPPER FOR TEAM CONTENT (Hidden by default) -->
+    <div id="section-team" class="view-section hidden">
+        <!-- Header -->
+        <div class="page-header">
+            <h1>Command Center</h1>
+            <p>The architects behind the frequency.</p>
+        </div>
+
+        <!-- TIER 1: Executive Leadership -->
+        <div class="container">
+            <div class="tier-label">/// ROOT_ACCESS</div>
+            
+            <div class="tier-grid">
+                <!-- ColourfulPlanets -->
+                <div class="team-card rank-exec">
+                    <div class="pfp-wrapper">
+                        <img src="https://cdn.discordapp.com/avatars/1023108830760009768/6d9676be4cc8ab1a0e34f8d5e34195cb.png?size=512" alt="ColourfulPlanets">
+                    </div>
+                    <span class="role-badge">Founder & Lead Dev</span>
+                    <h3 class="member-name">ColourfulPlanets</h3>
+                    <p class="member-bio">
+                        Architect of the Pulse infrastructure. Full-stack developer specializing in Discord bot systems, web dashboards, and network engineering.
+                    </p>
+                    <div style="margin-bottom: 40px;"></div>
                     
-                    <div class="status" id="status">System Standby</div>
-
-                    <div class="song-info">
-                        <div class="song-title" id="songTitle">Ready to Tune In</div>
-                        <div class="song-artist" id="songArtist">Pulse Radio Network</div>
+                    <div class="skills-container">
+                        <div class="skills-ticker">
+                            <span><i class="fab fa-js"></i>JavaScript</span> 
+                            <span><i class="fab fa-react"></i>React</span> 
+                            <span>Next.js</span> 
+                            <span><i class="fab fa-node-js"></i>Node.js</span> 
+                            <span>MongoDB</span> 
+                            <span><i class="fab fa-python"></i>Python</span> 
+                            <span><i class="fab fa-aws"></i>AWS</span> 
+                            <span>Discord.js</span>
+                            <span>Lua</span>
+                            <span><i class="fab fa-js"></i>JavaScript</span> 
+                            <span><i class="fab fa-react"></i>React</span> 
+                            <span>Next.js</span> 
+                            <span><i class="fab fa-node-js"></i>Node.js</span> 
+                            <span>MongoDB</span> 
+                        </div>
                     </div>
+                </div>
+            </div>
 
-                    <div class="volume-container">
-                        <i class="fas fa-volume-down" style="font-size: 0.8rem;"></i>
-                        <input type="range" min="0" max="1" step="0.01" value="0.8" class="volume-slider" id="volumeSlider">
-                        <i class="fas fa-volume-up" style="font-size: 0.8rem;"></i>
+            <!-- TIER 2: Management Team -->
+            <div class="tier-label">/// SYS_ADMINS</div>
+            
+            <div class="tier-grid">
+                <!-- creepey_me -->
+                <div class="team-card rank-mgmt">
+                    <div class="pfp-wrapper">
+                        <img src="https://cdn.discordapp.com/avatars/833717336476745728/a063a2ec2bbb82f42e6c0fa4327881f9.png?size=512" alt="creepey_me">
                     </div>
+                    <span class="role-badge">Station Manager</span>
+                    <h3 class="member-name">creepey_me</h3>
+                    <p class="member-bio">
+                        Operations Lead. Orchestrates staff training, event schedules, and ensures daily broadcast operations run seamlessly.
+                    </p>
+                </div>
+
+                <!-- weeeeeeeeeeeeeeee_weee -->
+                <div class="team-card rank-mgmt">
+                    <div class="pfp-wrapper">
+                        <img src="https://cdn.discordapp.com/avatars/866208706600501268/88dc69125cb370588092596f240e1717.png?size=512" alt="weee">
+                    </div>
+                    <span class="role-badge">Program Director</span>
+                    <h3 class="member-name">weeeee_weee</h3>
+                    <p class="member-bio">
+                        Content Curator. Selects the high-rotation playlists and directs the overall station vibe for maximum flow.
+                    </p>
+                </div>
+            </div>
+
+            <!-- TIER 3: Development & Talent -->
+            <div class="tier-label">/// CONTRIBUTORS</div>
+
+            <div class="tier-grid">
+                <!-- ernestosabella -->
+                <div class="team-card rank-dev">
+                    <div class="pfp-wrapper">
+                        <img src="https://cdn.discordapp.com/avatars/163771270125715458/df3d5dcce95da34655db8d8fd8933364.png?size=512" alt="ernestosabella">
+                    </div>
+                    <span class="role-badge">Dev & Presenter</span>
+                    <h3 class="member-name">ernestosabella</h3>
+                    <p class="member-bio">
+                        Code contributor and on-air personality. Bringing technical expertise and live entertainment to the frequency.
+                    </p>
                 </div>
             </div>
         </div>
     </div>
+    <!-- END TEAM WRAPPER -->
 
-    <!-- Features -->
-    <div class="section" id="features">
-        <div class="section-header">
-            <h2>System Specs</h2>
-            <p>Built for performance and uptime.</p>
-        </div>
-        
-        <div class="grid-3">
-            <div class="feature-card">
-                <i class="fas fa-broadcast-tower"></i>
-                <h3>24/7 Uptime</h3>
-                <p>Redundant stream servers ensure the music never stops, even during your late-night debugging sessions.</p>
-            </div>
-            <div class="feature-card">
-                <i class="fas fa-wave-square"></i>
-                <h3>320kbps Audio</h3>
-                <p>Crystal clear, high-bitrate audio delivery. No compression artifacts, just pure sound.</p>
-            </div>
-            <div class="feature-card">
-                <i class="fas fa-terminal"></i>
-                <h3>Open Request</h3>
-                <p>Control the playlist via our Discord bot. Community-curated tracks voted by listeners.</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- About Section -->
-    <div class="section" id="about">
-        <div class="grid-2">
-            <div>
-                <h2 style="text-align: left;">The Network</h2>
-                <p style="color: var(--text-muted); margin-bottom: 20px;">
-                    Pulse Radio isn't just a playlist—it's infrastructure. We operate a dedicated broadcasting node in NSW, Australia, designed to deliver low-latency audio to listeners worldwide.
-                </p>
-                <p style="color: var(--text-muted);">
-                    Whether you are coding a new react app, grinding an RPG, or just chilling, our frequency adapts to your workflow.
-                </p>
-            </div>
-            <div class="stats-box">
-                <h3 style="color: var(--primary); margin-top: 0; font-family: 'JetBrains Mono';">/// STATUS_REPORT</h3>
-                <div style="display: flex; justify-content: space-between; margin-top: 40px;">
-                    <div class="stat-item">
-                        <strong>99.9%</strong>
-                        <span style="font-size: 0.8rem; color: #666; text-transform:uppercase; letter-spacing:1px;">Availability</span>
-                    </div>
-                    <div class="stat-item">
-                        <strong>0$</strong>
-                        <span style="font-size: 0.8rem; color: #666; text-transform:uppercase; letter-spacing:1px;">Cost</span>
-                    </div>
-                    <div class="stat-item">
-                        <strong>Inf</strong>
-                        <span style="font-size: 0.8rem; color: #666; text-transform:uppercase; letter-spacing:1px;">Vibes</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Discord -->
-    <div class="section" id="community">
-        <div class="discord-section">
-            <i class="fab fa-discord" style="font-size: 3.5rem; color: #5865F2; margin-bottom: 20px; filter: drop-shadow(0 0 20px rgba(88,101,242,0.4));"></i>
-            <h2>Join the Neural Network</h2>
-            <p style="max-width: 600px; margin: 10px auto; color: var(--text-muted);">
-                Connect with the community, access the DJ bot, and participate in server events.
-            </p>
-            <a href="https://discord.gg/GDT8pZ5vRs" target="_blank" class="btn-discord">
-                <span>Enter Discord</span> <i class="fas fa-arrow-right"></i>
-            </a>
-        </div>
-    </div>
 
     <!-- Footer -->
     <footer>
@@ -673,6 +944,22 @@
         if (location.protocol === 'https:') {
             popup.style.display = 'block';
             setTimeout(() => { popup.style.display = 'none'; }, 15000);
+        }
+
+        // --- PAGE SWITCHING LOGIC (SPA) ---
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+            
+            // Show target section
+            document.getElementById(`section-${sectionId}`).classList.remove('hidden');
+
+            // Update Nav Active State
+            document.querySelectorAll('.nav-links a').forEach(el => el.classList.remove('active'));
+            document.getElementById(`nav-${sectionId}`).classList.add('active');
+
+            // Scroll to top
+            window.scrollTo(0,0);
         }
 
         function handlePlayClick() {
