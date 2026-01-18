@@ -717,7 +717,7 @@
 
                         <div class="volume-container">
                             <i class="fas fa-volume-down" style="font-size: 0.8rem;"></i>
-                            <input type="range" min="0" max="1" step="0.01" value="0.8" class="volume-slider" id="volumeSlider">
+                            <input type="range" min="0" max="1" step="0.01" value="0.5" class="volume-slider" id="volumeSlider">
                             <i class="fas fa-volume-up" style="font-size: 0.8rem;"></i>
                         </div>
                     </div>
@@ -935,7 +935,7 @@
         let isConnecting = false;
         let updateInterval;
 
-        audio.volume = 0.8;
+        audio.volume = 0.5;
 
         volumeSlider.addEventListener("input", (e) => {
             audio.volume = e.target.value;
