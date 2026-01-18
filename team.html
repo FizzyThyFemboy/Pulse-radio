@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Meet the team behind Pulse Radio.">
+    <title>Our Team | Pulse Radio</title>
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #ff3e3e;
+            --primary-glow: rgba(255, 62, 62, 0.4);
+            --bg-dark: #0a0a0a;
+            --bg-panel: rgba(25, 25, 25, 0.7);
+            --text-main: #ffffff;
+            --text-muted: #b3b3b3;
+            
+            /* Rank Colors */
+            --rank-owner: #ff3e3e;     /* Red */
+            --rank-admin: #5865F2;     /* Discord Blue/Purple */
+            --rank-dev: #2ecc71;       /* Emerald Green */
+            --rank-presenter: #f1c40f; /* Gold */
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Outfit', sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* --- Background Animation --- */
+        .bg-mesh {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 50% 10%, rgba(255, 62, 62, 0.05), transparent 40%),
+                        radial-gradient(circle at 10% 90%, rgba(88, 101, 242, 0.05), transparent 40%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* --- Navigation --- */
+        nav {
+            position: fixed;
+            top: 0; width: 100%;
+            padding: 20px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .nav-logo {
+            font-weight: 900;
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            color: white;
+            text-decoration: none;
+        }
+        .nav-logo span { color: var(--primary); }
+
+        .back-btn {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 8px 20px;
+            border-radius: 50px;
+            transition: 0.3s;
+            font-size: 0.9rem;
+        }
+        .back-btn:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        /* --- Header Section --- */
+        .page-header {
+            text-align: center;
+            padding: 150px 20px 50px;
+        }
+
+        .page-header h1 {
+            font-size: 4rem;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: -2px;
+            background: -webkit-linear-gradient(#fff, #aaa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .page-header p {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            margin-top: 10px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* --- Team Layout --- */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px 100px;
+        }
+
+        .tier-label {
+            text-align: center;
+            font-size: 1rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--text-muted);
+            margin: 60px 0 30px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .tier-label::before, .tier-label::after {
+            content: '';
+            height: 1px;
+            width: 50px;
+            background: rgba(255,255,255,0.1);
+            margin: 0 20px;
+        }
+
+        .tier-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        /* --- Card Styles --- */
+        .team-card {
+            background: var(--bg-panel);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            transition: 0.3s;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 300px; /* Fixed width for uniformity */
+        }
+
+        .team-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        /* --- Unique Glows per Rank --- */
+        
+        /* Executive (Red) */
+        .team-card.rank-exec {
+            border-color: rgba(255, 62, 62, 0.3);
+            background: linear-gradient(180deg, rgba(255, 62, 62, 0.05) 0%, var(--bg-panel) 100%);
+            width: 350px; /* Slightly larger for owner */
+            padding: 40px 30px 50px; /* Extra bottom padding for ticker */
+        }
+        .team-card.rank-exec:hover { border-color: var(--rank-owner); }
+
+        /* Management (Blue) */
+        .team-card.rank-mgmt:hover { border-color: var(--rank-admin); }
+
+        /* Dev / Staff (Green/Gold) */
+        .team-card.rank-dev:hover { border-color: var(--rank-dev); }
+
+        /* --- PFP --- */
+        .pfp-wrapper {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        /* Larger PFP for owner */
+        .rank-exec .pfp-wrapper { width: 130px; height: 130px; }
+
+        .pfp-wrapper img {
+            width: 100%; height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid rgba(255,255,255,0.05);
+            transition: 0.3s;
+            background: #111;
+        }
+
+        .rank-exec:hover .pfp-wrapper img { border-color: var(--rank-owner); transform: scale(1.05); }
+        .rank-mgmt:hover .pfp-wrapper img { border-color: var(--rank-admin); transform: scale(1.05); }
+        .rank-dev:hover .pfp-wrapper img { border-color: var(--rank-dev); transform: scale(1.05); }
+
+        /* --- Text Styles --- */
+        .role-badge {
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 5px 12px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            display: inline-block;
+            background: rgba(255,255,255,0.05);
+            color: var(--text-muted);
+        }
+
+        /* Colored Badges */
+        .rank-exec .role-badge { background: rgba(255, 62, 62, 0.15); color: var(--rank-owner); }
+        .rank-mgmt .role-badge { background: rgba(88, 101, 242, 0.15); color: var(--rank-admin); }
+        .rank-dev .role-badge { background: rgba(46, 204, 113, 0.15); color: var(--rank-dev); }
+
+        .member-name {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin: 0 0 10px;
+            color: white;
+        }
+
+        .member-bio {
+            font-size: 0.9rem;
+            color: #aaa;
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+
+        /* --- Skills Ticker (Owner Only) --- */
+        .skills-container {
+            width: 100%;
+            overflow: hidden;
+            white-space: nowrap;
+            position: absolute;
+            bottom: 0; left: 0;
+            padding: 10px 0;
+            background: rgba(0,0,0,0.6);
+            border-top: 1px solid rgba(255,62,62,0.1);
+        }
+
+        .skills-ticker {
+            display: inline-block;
+            animation: ticker 25s linear infinite;
+        }
+
+        .skills-ticker span {
+            display: inline-block;
+            padding: 0 10px;
+            font-size: 0.75rem;
+            color: #ccc;
+            font-family: monospace;
+            opacity: 0.9;
+        }
+        
+        .skills-ticker span i { margin-right: 5px; color: var(--rank-owner); }
+
+        @keyframes ticker {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid rgba(255,255,255,0.05);
+            padding: 50px 20px;
+            text-align: center;
+            color: var(--text-muted);
+            margin-top: 50px;
+        }
+
+        @media (max-width: 768px) {
+            .page-header h1 { font-size: 2.5rem; }
+            nav { padding: 20px; }
+            .team-card { width: 100%; max-width: 350px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-mesh"></div>
+
+    <!-- Navigation -->
+    <nav>
+        <a href="index.html" class="nav-logo">Pulse <span>Radio</span></a>
+        <a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Music</a>
+    </nav>
+
+    <!-- Header -->
+    <div class="page-header">
+        <h1>Meet The Team</h1>
+        <p>The professionals powering the platform.</p>
+    </div>
+
+    <!-- TIER 1: Executive Leadership -->
+    <div class="container">
+        <div class="tier-label">Executive Leadership</div>
+        
+        <div class="tier-grid">
+            <!-- ColourfulPlanets -->
+            <div class="team-card rank-exec">
+                <div class="pfp-wrapper">
+                    <!-- PASTE REAL DISCORD PFP LINK HERE -->
+                    <img src="https://cdn.discordapp.com/avatars/1023108830760009768/6d9676be4cc8ab1a0e34f8d5e34195cb.png?size=512" alt="ColourfulPlanets">
+                </div>
+                <span class="role-badge">Owner & Founder</span>
+                <h3 class="member-name">ColourfulPlanets</h3>
+                <p class="member-bio">
+                    Station Manager & Lead Developer. Architect of the entire Pulse Radio infrastructure, including bot systems, web development, and server management.
+                </p>
+                
+                <!-- Infinite Skills Ticker -->
+                <div class="skills-container">
+                    <div class="skills-ticker">
+                        <span><i class="fab fa-html5"></i>HTML5</span> 
+                        <span><i class="fab fa-react"></i>React</span> 
+                        <span>Next.js</span> 
+                        <span><i class="fab fa-node-js"></i>Node.js</span> 
+                        <span><i class="fab fa-laravel"></i>Laravel</span> 
+                        <span>MongoDB</span> 
+                        <span>SQL</span> 
+                        <span><i class="fab fa-python"></i>Python</span> 
+                        <span>Lua</span> 
+                        <span>C++</span> 
+                        <span><i class="fab fa-aws"></i>AWS</span> 
+                        <span><i class="fab fa-unity"></i>Unity</span>
+                        <span>Unreal</span>
+                        <!-- Loop -->
+                        <span><i class="fab fa-html5"></i>HTML5</span> 
+                        <span><i class="fab fa-react"></i>React</span> 
+                        <span>Next.js</span> 
+                        <span><i class="fab fa-node-js"></i>Node.js</span> 
+                        <span><i class="fab fa-laravel"></i>Laravel</span> 
+                        <span>MongoDB</span> 
+                        <span>SQL</span> 
+                        <span><i class="fab fa-python"></i>Python</span> 
+                        <span>Lua</span> 
+                        <span>C++</span> 
+                        <span><i class="fab fa-aws"></i>AWS</span> 
+                        <span><i class="fab fa-unity"></i>Unity</span>
+                        <span>Unreal</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TIER 2: Management Team -->
+        <div class="tier-label">Management Team</div>
+        
+        <div class="tier-grid">
+            <!-- creepey_me -->
+            <div class="team-card rank-mgmt">
+                <div class="pfp-wrapper">
+                    <img src="https://cdn.discordapp.com/avatars/833717336476745728/a063a2ec2bbb82f42e6c0fa4327881f9.png?size=512" alt="creepey_me">
+                </div>
+                <span class="role-badge">Station Manager</span>
+                <h3 class="member-name">creepey_me</h3>
+                <p class="member-bio">
+                    Operations Lead. Manages staff training, presentations, and ensures daily operations run seamlessly.
+                </p>
+            </div>
+
+            <!-- weeeeeeeeeeeeeeee_weee -->
+            <div class="team-card rank-mgmt">
+                <div class="pfp-wrapper">
+                    <img src="https://cdn.discordapp.com/avatars/866208706600501268/88dc69125cb370588092596f240e1717.png?size=512" alt="weee">
+                </div>
+                <span class="role-badge">Program Director</span>
+                <h3 class="member-name">weeeeeeeeeeeeeeee_weee</h3>
+                <p class="member-bio">
+                    Content Lead. Curates the music schedule, selects playlists, and directs the overall station vibe.
+                </p>
+            </div>
+        </div>
+
+        <!-- TIER 3: Development & Talent -->
+        <div class="tier-label">Development & Talent</div>
+
+        <div class="tier-grid">
+            <!-- ernestosabella -->
+            <div class="team-card rank-dev">
+                <div class="pfp-wrapper">
+                    <img src="https://cdn.discordapp.com/avatars/163771270125715458/df3d5dcce95da34655db8d8fd8933364.png?size=512" alt="ernestosabella">
+                </div>
+                <span class="role-badge">Developer & Presenter</span>
+                <h3 class="member-name">ernestosabella</h3>
+                <p class="member-bio">
+                    Full-stack contributor to the Pulse codebase and on-air personality bringing live entertainment.
+                </p>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Pulse Radio. Built by Pulse Dev Team.</p>
+    </footer>
+
+</body>
+</html>
