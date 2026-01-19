@@ -139,7 +139,10 @@
         /* VIEW MANAGEMENT */
         .view-section {
             display: block;
-            animation: fadeIn 0.5s ease-out;
+            width: 100%;
+            min-height: 100vh;
+            animation: fadeIn 0.5s ease-out forwards; /* 'forwards' ensures it stays visible */
+            opacity: 1 !important; /* Force opacity just in case */
         }
         .hidden {
             display: none !important;
@@ -690,50 +693,51 @@
             <h1>Digital<br>Heartbeat.</h1>
             <p>High-fidelity audio streaming for the coding generation.</p>
             
-            <div class="player-wrapper">
-                <div class="player-card" id="playerCard">
-                    <div class="player-inner">
-                        <div class="visualizer">
-                            <div class="bar"></div>
-                            <div class="bar"></div>
-                            <div class="bar"></div>
-                            <div class="bar"></div>
-                            <div class="bar"></div>
-                        </div>
+<div class="player-wrapper">
+    <div class="player-card" id="playerCard">
+        <div class="player-inner">
+            <div class="visualizer">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </div>
 
-                        <!-- Audio Element with ID 'stream' -->
-                        <audio id="stream" preload="none"></audio>
+            <!-- Audio Element with ID 'stream' -->
+            <audio id="stream" preload="none"></audio>
 
-                        <button class="play-btn" id="playButton" onclick="handlePlayClick()">
-                            <i class="fas fa-play" id="icon"></i>
-                        </button>
-                        
-                        <div class="status" id="status">System Standby</div>
+            <button class="play-btn" id="playButton" onclick="handlePlayClick()">
+                <i class="fas fa-play" id="icon"></i>
+            </button>
+            
+            <div class="status" id="status">System Standby</div>
 
-                        <div class="song-info">
-                        <h2 id="songTitle">Waiting for Signal...</h2>
-                        <div class="artist-name" id="songArtist">Pulse Radio Network</div>
+            <div class="song-info">
+                <h2 id="songTitle">Waiting for Signal...</h2>
+                <div class="artist-name" id="songArtist">Pulse Radio Network</div>
 
-                        <!-- NEW LISTENER COUNT -->
-                        <div id="listenerCount" style="
-                            font-family: 'JetBrains Mono', monospace; 
-                            color: var(--primary); 
-                            font-size: 0.85rem; 
-                            margin-top: 10px; 
-                            opacity: 0.9; 
-                            display: flex; 
-                            align-items: center; 
-                            justify-content: center; 
-                            gap: 8px;
-                            background: rgba(255, 255, 255, 0.05);
-                            padding: 5px 12px;
-                            border-radius: 15px;
-                            width: fit-content;
-                            margin-left: auto;
-                            margin-right: auto;
-                        ">
-                            <i class="fas fa-users"></i> <span>-- Listeners</span>
-                        </div>
+                <!-- NEW LISTENER COUNT -->
+                <div id="listenerCount" style="
+                    font-family: 'JetBrains Mono', monospace; 
+                    color: var(--primary); 
+                    font-size: 0.85rem; 
+                    margin-top: 10px; 
+                    opacity: 0.9; 
+                    display: flex; 
+                    align-items: center; 
+                    justify-content: center; 
+                    gap: 8px;
+                    background: rgba(255, 255, 255, 0.05);
+                    padding: 5px 12px;
+                    border-radius: 15px;
+                    width: fit-content;
+                    margin-left: auto;
+                    margin-right: auto;
+                ">
+                    <i class="fas fa-users"></i> <span>-- Listeners</span>
+                </div>
+            </div>
 
                         <div class="volume-container">
                             <i class="fas fa-volume-down" style="font-size: 0.8rem;"></i>
@@ -967,21 +971,35 @@
             setTimeout(() => { popup.style.display = 'none'; }, 15000);
         }
 
-        // --- PAGE SWITCHING LOGIC (SPA) ---
-        function showSection(sectionId) {
-            // Hide all sections
-            document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
-            
-            // Show target section
-            document.getElementById(`section-${sectionId}`).classList.remove('hidden');
+      function showSection(sectionId) {
+    // 1. SAFEGUARD: Check if target exists first
+    const targetSection = document.getElementById(`section-${sectionId}`);
+    if (!targetSection) {
+        console.error(`Error: Section "section-${sectionId}" not found!`);
+        return;
+    }
 
-            // Update Nav Active State
-            document.querySelectorAll('.nav-links a').forEach(el => el.classList.remove('active'));
-            document.getElementById(`nav-${sectionId}`).classList.add('active');
+    // 2. Hide all sections
+    document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+    
+    // 3. Show target section
+    targetSection.classList.remove('hidden');
 
-            // Scroll to top
-            window.scrollTo(0,0);
-        }
+    // 4. Update Nav Active State (Safe Mode)
+    document.querySelectorAll('.nav-links a').forEach(el => el.classList.remove('active'));
+    
+    const activeNav = document.getElementById(`nav-${sectionId}`);
+    if (activeNav) {
+        activeNav.classList.add('active');
+    } else {
+        // Fallback: If clicked from "Tune In" or "About", maybe highlight Home?
+        const homeNav = document.getElementById('nav-home');
+        if (homeNav) homeNav.classList.add('active');
+    }
+
+    // 5. Scroll to top
+    window.scrollTo(0,0);
+}
 
         function handlePlayClick() {
             if (isConnecting) return;
