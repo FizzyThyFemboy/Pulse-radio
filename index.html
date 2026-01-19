@@ -711,8 +711,28 @@
                         <div class="status" id="status">System Standby</div>
 
                         <div class="song-info">
-                            <div class="song-title" id="songTitle">Ready to Tune In</div>
-                            <div class="song-artist" id="songArtist">Pulse Radio Network</div>
+                        <h2 id="songTitle">Waiting for Signal...</h2>
+                        <div class="artist-name" id="songArtist">Pulse Radio Network</div>
+
+                        <!-- NEW LISTENER COUNT -->
+                        <div id="listenerCount" style="
+                            font-family: 'JetBrains Mono', monospace; 
+                            color: var(--primary); 
+                            font-size: 0.85rem; 
+                            margin-top: 10px; 
+                            opacity: 0.9; 
+                            display: flex; 
+                            align-items: center; 
+                            justify-content: center; 
+                            gap: 8px;
+                            background: rgba(255, 255, 255, 0.05);
+                            padding: 5px 12px;
+                            border-radius: 15px;
+                            width: fit-content;
+                            margin-left: auto;
+                            margin-right: auto;
+                        ">
+                            <i class="fas fa-users"></i> <span>-- Listeners</span>
                         </div>
 
                         <div class="volume-container">
@@ -928,6 +948,7 @@
         const volumeSlider = document.getElementById("volumeSlider");
         const songTitle = document.getElementById("songTitle");
         const songArtist = document.getElementById("songArtist");
+        const listenerCountEl = document.getElementById("listenerCount");
 
         const STREAM_URL = "https://stream.lemmo.app/stream";
 
@@ -1042,38 +1063,47 @@
         }
 
         async function updateNowPlaying() {
-            if(!isPlaying) return;
-            try {
-                const response = await fetch('https://stream.lemmo.app/status-json.xsl');
-                const data = await response.json();
-                
-                if (data && data.icestats && data.icestats.source) {
-                    const source = Array.isArray(data.icestats.source) ? data.icestats.source[0] : data.icestats.source;
-                    
-                    if (source && source.title) {
-                        const parts = source.title.split(' - ');
-                        let artist = "Pulse Radio";
-                        let title = source.title;
-                        
-                        if (parts.length > 1) {
-                            artist = parts[0];
-                            title = parts[1];
-                        }
-
-                        songArtist.innerText = artist;
-                        songTitle.innerText = title;
-
-                        if ('mediaSession' in navigator) {
-                            navigator.mediaSession.metadata = new MediaMetadata({
-                                title: title,
-                                artist: artist,
-                                album: "Pulse Radio - Live"
-                            });
-                        }
+    if(!isPlaying) return;
+    try {
+        const response = await fetch('https://stream.lemmo.app/status-json.xsl');
+        const data = await response.json();
+        
+        if (data && data.icestats && data.icestats.source) {
+            // Handle array vs object (Icecast weirdness)
+            const source = Array.isArray(data.icestats.source) ? data.icestats.source[0] : data.icestats.source;
+            
+            if (source) {
+                // 1. Update Song Info
+                if (source.title) {
+                    const parts = source.title.split(' - ');
+                    if (parts.length > 1) {
+                        songArtist.innerText = parts[0];
+                        songTitle.innerText = parts[1];
+                    } else {
+                        songArtist.innerText = "Pulse Radio";
+                        songTitle.innerText = source.title;
                     }
                 }
-            } catch (error) { console.log("Metadata error"); }
+
+                // 2. Update Listener Count
+                if (source.listeners !== undefined) {
+                    listenerCountEl.innerHTML = `<i class="fas fa-users"></i> ${source.listeners} Tuned In`;
+                }
+
+                // 3. Update Lock Screen Media
+                if ('mediaSession' in navigator) {
+                    navigator.mediaSession.metadata = new MediaMetadata({
+                        title: songTitle.innerText,
+                        artist: songArtist.innerText,
+                        album: "Pulse Radio Live"
+                    });
+                }
+            }
         }
+    } catch (error) { 
+        console.warn("Metadata update failed:", error); 
+    }
+}
         
         if ('mediaSession' in navigator) {
             navigator.mediaSession.setActionHandler('play', () => { if(!isPlaying) handlePlayClick(); });
