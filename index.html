@@ -954,7 +954,7 @@
         const songArtist = document.getElementById("songArtist");
         const listenerCountEl = document.getElementById("listenerCount");
 
-        const STREAM_URL = 'https://lemmo.app/listen/pulse_radio/radio.mp3';
+        const STREAM_URL = 'https://lemmo.app/listen/pulse_radio/radio.mp3?123';
 
         let isPlaying = false;
         let isConnecting = false;
@@ -965,11 +965,6 @@
         volumeSlider.addEventListener("input", (e) => {
             audio.volume = e.target.value;
         });
-
-        if (location.protocol === 'https:') {
-            popup.style.display = 'block';
-            setTimeout(() => { popup.style.display = 'none'; }, 15000);
-        }
 
       function showSection(sectionId) {
     // 1. SAFEGUARD: Check if target exists first
