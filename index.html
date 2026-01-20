@@ -954,7 +954,7 @@
         const songArtist = document.getElementById("songArtist");
         const listenerCountEl = document.getElementById("listenerCount");
 
-        const STREAM_URL = "https://stream.lemmo.app/stream";
+        const STREAM_URL = 'https://lemmo.app/listen/pulse_radio/radio.mp3';
 
         let isPlaying = false;
         let isConnecting = false;
@@ -1080,46 +1080,47 @@
             }
         }
 
-        async function updateNowPlaying() {
-    if(!isPlaying) return;
+async function updateNowPlaying() {
+    // We fetch even if paused, so the site updates immediately on load
     try {
-        const response = await fetch('https://stream.lemmo.app/status-json.xsl');
+        // 1. Fetch from AzuraCast API (Station ID 1)
+        const response = await fetch('https://lemmo.app/api/nowplaying/1');
         const data = await response.json();
-        
-        if (data && data.icestats && data.icestats.source) {
-            // Handle array vs object (Icecast weirdness)
-            const source = Array.isArray(data.icestats.source) ? data.icestats.source[0] : data.icestats.source;
+
+        // 2. Check if data is valid
+        if (data && data.now_playing) {
             
-            if (source) {
-                // 1. Update Song Info
-                if (source.title) {
-                    const parts = source.title.split(' - ');
-                    if (parts.length > 1) {
-                        songArtist.innerText = parts[0];
-                        songTitle.innerText = parts[1];
-                    } else {
-                        songArtist.innerText = "Pulse Radio";
-                        songTitle.innerText = source.title;
-                    }
-                }
+            // --- Update Song Info ---
+            const song = data.now_playing.song;
+            if (song.title && song.artist) {
+                songTitle.innerText = song.title;
+                songArtist.innerText = song.artist;
+            } else {
+                // Fallback if text is combined or empty
+                songTitle.innerText = song.text || "Pulse Radio";
+                songArtist.innerText = "Live Stream";
+            }
 
-                // 2. Update Listener Count
-                if (source.listeners !== undefined) {
-                    listenerCountEl.innerHTML = `<i class="fas fa-users"></i> ${source.listeners} Tuned In`;
-                }
+            // --- Update Listener Count ---
+            const listeners = data.listeners.total;
+            if (listenerCountEl) {
+                listenerCountEl.innerHTML = `<i class="fas fa-users"></i> ${listeners} Tuned In`;
+            }
 
-                // 3. Update Lock Screen Media
-                if ('mediaSession' in navigator) {
-                    navigator.mediaSession.metadata = new MediaMetadata({
-                        title: songTitle.innerText,
-                        artist: songArtist.innerText,
-                        album: "Pulse Radio Live"
-                    });
-                }
+            // --- Update Lock Screen / Browser Media Controls ---
+            if ('mediaSession' in navigator) {
+                navigator.mediaSession.metadata = new MediaMetadata({
+                    title: songTitle.innerText,
+                    artist: songArtist.innerText,
+                    album: "Pulse Radio Live",
+                    artwork: [
+                        { src: data.now_playing.song.art || 'https://lemmo.app/static/img/generic_song.jpg', sizes: '96x96', type: 'image/jpeg' }
+                    ]
+                });
             }
         }
-    } catch (error) { 
-        console.warn("Metadata update failed:", error); 
+    } catch (error) {
+        console.warn('Metadata update failed:', error);
     }
 }
         
