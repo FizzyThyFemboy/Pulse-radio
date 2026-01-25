@@ -1,0 +1,33 @@
+<!-- Hosted at https://pulse-radio-kappa.vercel.app/callback -->
+<!DOCTYPE html>
+<html>
+<body>
+    <h1>Authenticating...</h1>
+    <script>
+        // 1. Get the 'code' from URL (we actually need an Implicit Grant 'token' for client-side only, 
+        // but let's assume you have a backend swapping the code).
+        
+        // SIMPLE VERSION (If you change Discord OAuth to response_type=token):
+        const fragment = new URLSearchParams(window.location.hash.slice(1));
+        const accessToken = fragment.get('access_token');
+
+        if (accessToken) {
+            // Fetch user info from Discord API directly from browser
+            fetch('https://discord.com/api/users/@me', {
+                headers: { authorization: `Bearer ${accessToken}` }
+            })
+            .then(res => res.json())
+            .then(user => {
+                // REDIRECT TO APP
+                // pulseradio://auth?username=Lemmo&id=123&avatar=abc
+                window.location.href = `pulseradio://auth?username=${user.username}&id=${user.id}&avatar=${user.avatar}`;
+            })
+            .catch(err => {
+                document.body.innerText = "Error: " + err;
+            });
+        } else {
+             document.body.innerText = "No token found. Check your Discord OAuth settings to use 'Implicit Grant' (response_type=token)";
+        }
+    </script>
+</body>
+</html>
